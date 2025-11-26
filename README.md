@@ -110,10 +110,8 @@ python Train.py \
   --dataset_type ped2 \
   --dataset_path ./data \
   --exp_dir baseline \
-  --epochs 60 \
-  --batch_size 4 \
-  --loss_compact 0.1 \
-  --loss_separate 0.1
+  --epochs 50 \
+  --batch_size 32
 
 # Avenue
 python Train.py \
@@ -121,10 +119,8 @@ python Train.py \
   --dataset_type avenue \
   --dataset_path ./data \
   --exp_dir baseline \
-  --epochs 60 \
-  --batch_size 4 \
-  --loss_compact 0.1 \
-  --loss_separate 0.1
+  --epochs 50 \
+  --batch_size 32
 ```
 
 **Attention Model (With Attention Gates):**
@@ -137,10 +133,8 @@ python Train.py \
   --dataset_path ./data \
   --exp_dir ped2_attn_decoder \
   --attn_decoder gate \
-  --epochs 60 \
-  --batch_size 4 \
-  --loss_compact 0.1 \
-  --loss_separate 0.1
+  --epochs 50 \
+  --batch_size 32
 
 # Avenue
 python Train.py \
@@ -149,10 +143,8 @@ python Train.py \
   --dataset_path ./data \
   --exp_dir avenue_attn_decoder \
   --attn_decoder gate \
-  --epochs 60 \
-  --batch_size 4 \
-  --loss_compact 0.1 \
-  --loss_separate 0.1
+  --epochs 50 \
+  --batch_size 32
 ```
 
 **Training Parameters:**
@@ -179,7 +171,6 @@ python Evaluate.py \
   --gpus 0 \
   --dataset_path ./data \
   --dataset_type ped2 \
-  --method pred \
   --t_length 5 \
   --model_dir ./exp/ped2/pred/baseline/model.pth \
   --m_items_dir ./exp/ped2/pred/baseline/keys.pt
@@ -189,7 +180,6 @@ python Evaluate.py \
   --gpus 0 \
   --dataset_path ./data \
   --dataset_type avenue \
-  --method pred \
   --t_length 5 \
   --model_dir ./exp/avenue/pred/baseline/model.pth \
   --m_items_dir ./exp/avenue/pred/baseline/keys.pt
@@ -203,7 +193,6 @@ python Evaluate.py \
   --gpus 0 \
   --dataset_path ./data \
   --dataset_type ped2 \
-  --method pred \
   --t_length 5 \
   --attn_decoder gate \
   --model_dir ./exp/ped2/pred/ped2_attn_decoder/model.pth \
@@ -214,7 +203,6 @@ python Evaluate.py \
   --gpus 0 \
   --dataset_path ./data \
   --dataset_type avenue \
-  --method pred \
   --t_length 5 \
   --attn_decoder gate \
   --model_dir ./exp/avenue/pred/avenue_attn_decoder/model.pth \
@@ -287,38 +275,6 @@ python visualize_results.py \
 - Baseline: Input frames, target, reconstruction, error heatmap, error overlay
 - Attention: All baseline content plus attention maps at 3 levels and attention overlays
 
-**Comparison Visualizations:**
-
-```bash
-# Ped2: Baseline vs Attention
-python visualize_comparison.py \
-  --dataset_type ped2 \
-  --dataset_path ./data \
-  --baseline_model ./exp/ped2/pred/baseline/model.pth \
-  --baseline_keys ./exp/ped2/pred/baseline/keys.pt \
-  --attn_model ./exp/ped2/pred/ped2_attn_decoder/model.pth \
-  --attn_keys ./exp/ped2/pred/ped2_attn_decoder/keys.pt \
-  --gpus 0
-
-# Avenue: Baseline vs Attention
-python visualize_comparison.py \
-  --dataset_type avenue \
-  --dataset_path ./data \
-  --baseline_model ./exp/avenue/pred/baseline/model.pth \
-  --baseline_keys ./exp/avenue/pred/baseline/keys.pt \
-  --attn_model ./exp/avenue/pred/avenue_attn_decoder/model.pth \
-  --attn_keys ./exp/avenue/pred/avenue_attn_decoder/keys.pt \
-  --gpus 0
-```
-
-**Output:** `./visualizations/comparison_{dataset}/`
-- `roc_comparison_combined.png` - Overlaid ROC curves
-- `confusion_matrix_comparison.png` - Side-by-side confusion matrices
-- `temporal_scores_comparison.png` - Anomaly scores over time
-- `metrics_table.png` - Performance metrics comparison
-- `score_distribution_comparison.png` - Score histograms
-- `metrics_comparison.csv` - Numerical metrics for tables
-
 ---
 
 ## Model Architecture
@@ -353,31 +309,6 @@ x = skip_features (from encoder)
 alpha = sigmoid(W_g * g + W_x * x)
 output = x * alpha
 ```
-
----
-
-## Troubleshooting
-
-**CUDA Out of Memory:**
-```bash
-# Reduce batch size
---batch_size 2
-
-# Or use a different GPU
---gpus 1
-```
-
-**Model Loading Errors (PyTorch 2.0+):**
-The code handles this automatically with fallback mechanisms for `torch.load`.
-
-**Avenue Dataset Frame Extraction:**
-```bash
-python extract_avenue_from_videos.py
-```
-Extracts frames from .avi videos starting at 001.jpg (not 000.jpg) to match DataLoader expectations.
-
-**DataLoader Indexing Issues:**
-Fixed in `model/utils.py` - uses `list.index()` for proper frame access instead of filename-based indexing.
 
 ---
 
