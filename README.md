@@ -6,6 +6,7 @@ Memory-guided Normality for Anomaly Detection (MNAD) with attention gate mechani
 
 This project implements video anomaly detection using memory-augmented autoencoders with optional attention gate mechanisms. The model learns normal patterns from training videos and detects anomalies by measuring reconstruction errors on test videos.
 
+[link to the Comprehensive Report](https://github.com/VamshiNarmety/video_anomaly_detection/blob/main/video_anomaly_detection.pdf)
 **Key Features:**
 - Memory-guided autoencoder architecture
 - Attention U-Net style gating at decoder skip connections (optional)
